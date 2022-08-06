@@ -1,5 +1,5 @@
 //
-//  ValidatorFactory.swift
+//  ValidatorStrategyFactory.swift
 //  
 //
 //  Created by Daniel Martínez on 3/8/22.
@@ -7,21 +7,21 @@
 
 import Foundation
 
-class ValidatorFactory {
+class ValidatorStrategyFactory {
     
-    func create(validator: ValidationType) -> Validator {
+    func create(validator: ValidationStrategy) -> ValidatorStrategy {
         switch validator {
-        case .validation1:
-            return createValidator1()
-        case .validation2:
-            return createValidator2()
-        case .validation3:
-            return createValidator3()
+        case .first:
+            return createFirstValidatorStrategy()
+        case .second:
+            return createSecondValidatorStrategy()
+        case .third:
+            return createThirdValidatorStrategy()
         }
     }
     
-    private func createValidator1() -> Validator {
-        return ValidatorBuilder()
+    private func createFirstValidatorStrategy() -> ValidatorStrategy {
+        return ValidatorStrategyBuilder()
             .withMinimumLenght(8)
             .withCapitalLetterNeeded()
             .withLowercaseLetterNeeded()
@@ -30,8 +30,8 @@ class ValidatorFactory {
             .build()
     }
     
-    private func createValidator2() -> Validator {
-        return ValidatorBuilder()
+    private func createSecondValidatorStrategy() -> ValidatorStrategy {
+        return ValidatorStrategyBuilder()
             .withMinimumLenght(6)
             .withCapitalLetterNeeded()
             .withLowercaseLetterNeeded()
@@ -39,8 +39,8 @@ class ValidatorFactory {
             .build()
     }
     
-    private func createValidator3() -> Validator {
-        return ValidatorBuilder()
+    private func createThirdValidatorStrategy() -> ValidatorStrategy {
+        return ValidatorStrategyBuilder()
             .withMinimumLenght(16)
             .withCapitalLetterNeeded()
             .withLowercaseLetterNeeded()
