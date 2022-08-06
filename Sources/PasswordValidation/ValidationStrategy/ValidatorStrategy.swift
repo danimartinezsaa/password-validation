@@ -7,15 +7,16 @@
 
 import Foundation
 
-struct ValidatorStrategy {
+class ValidatorStrategy {
 
     private let requirements: [ValidationRequirement]
+    private let MAX_ERRORS_VALID_PASSWORD = 1
     
     init(requirements: [ValidationRequirement]) {
         self.requirements = requirements
     }
     
-    func validate(_ password: String) -> [ValidationRequirementError] {
+    func validate(_ password: String) -> Validation {
         var errors = [ValidationRequirementError]()
         
         requirements.forEach { requirement in
@@ -24,6 +25,6 @@ struct ValidatorStrategy {
             }
         }
         
-        return errors
+        return Validation(valid: errors.count <= MAX_ERRORS_VALID_PASSWORD, errors: errors)
     }
 }

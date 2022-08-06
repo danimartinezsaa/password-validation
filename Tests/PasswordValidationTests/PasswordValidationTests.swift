@@ -10,86 +10,120 @@ final class PasswordValidationTests: XCTestCase {
     }
 
     func testShouldValidateValidPassword() {
-        let errors = sut.validate("Passw0rd_")
-        XCTAssertTrue(errors.isEmpty)
+        let validation = sut.validate("Passw0rd_")
+        XCTAssertTrue(validation.valid)
+        XCTAssertTrue(validation.errors.isEmpty)
     }
 
-    func testPasswordWithLessThan8CharactersShouldBeInvalid() {
-        let errors = sut.validate("Pass0_")
-        XCTAssertTrue(errors.contains(.invalidCharacters))
+    func testPasswordWithLessThan8CharactersShouldBeValid() {
+        let validation = sut.validate("Pass0_")
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.invalidCharacters])
     }
 
-    func testPasswordWithoutCapitalLettersShouldBeInvalid() {
-        let errors = sut.validate("passw0rd_")
-        XCTAssertTrue(errors.contains(.missingCapitalLetter))
+    func testPasswordWithoutCapitalLettersShouldBeValid() {
+        let validation = sut.validate("passw0rd_")
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingCapitalLetter])
     }
 
-    func testPasswordWithoutAtLeastOneLowecaseShouldBeInvalid() {
-        let errors = sut.validate("PASSW0RD_")
-        XCTAssertTrue(errors.contains(.missingLowercaseLetter))
+    func testPasswordWithoutAtLeastOneLowecaseShouldBeValid() {
+        let validation = sut.validate("PASSW0RD_")
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingLowercaseLetter])
     }
 
-    func testPasswordWithoutNumbersShouldBeInvalid() {
-        let errors = sut.validate("Password_")
-        XCTAssertTrue(errors.contains(.missingNumber))
+    func testPasswordWithoutNumbersShouldBeValid() {
+        let validation = sut.validate("Password_")
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingNumber])
     }
 
-    func testPasswordWithoutUnderscoresShouldBeInvalid() {
-        let errors = sut.validate("Passw0rd")
-        XCTAssertTrue(errors.contains(.missingUnderscore))
+    func testPasswordWithoutUnderscoresShouldBeValid() {
+        let validation = sut.validate("Passw0rd")
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingUnderscore])
+    }
+    
+    func testPasswordWithTwoErrorsShouldBeInvalid() {
+        let validation = sut.validate("pass0_")
+        XCTAssertFalse(validation.valid)
+        XCTAssertEqual(validation.errors, [.invalidCharacters, .missingCapitalLetter])
     }
 
-//    // Validation 2
+    // Validation 2
 
     func testWhenReceiveTheSecondStrategyShouldValidateValidPassword() {
-        let errors = sut.validate("Passw0rd", strategy: .second)
-        XCTAssertTrue(errors.isEmpty)
+        let validation = sut.validate("Passw0rd", strategy: .second)
+        XCTAssertTrue(validation.valid)
+        XCTAssertTrue(validation.errors.isEmpty)
     }
 
-    func testWhenReceiveTheSecondStrategyThePasswordWithLessThan6CharactersShouldBeInvalid() {
-        let errors = sut.validate("Pass0", strategy: .second)
-        XCTAssertTrue(errors.contains(.invalidCharacters))
+    func testWhenReceiveTheSecondStrategyThePasswordWithLessThan6CharactersShouldBeValid() {
+        let validation = sut.validate("Pass0", strategy: .second)
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.invalidCharacters])
     }
 
-    func testWhenReceiveTheSecondValidatorThePasswordWithoutAtLeastCapitalLetterShouldBeInvalid() {
-        let errors = sut.validate("password0", strategy: .second)
-        XCTAssertTrue(errors.contains(.missingCapitalLetter))
+    func testWhenReceiveTheSecondValidatorThePasswordWithoutAtLeastCapitalLetterShouldBeValid() {
+        let validation = sut.validate("password0", strategy: .second)
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingCapitalLetter])
     }
 
-    func testWhenReceiveTheSecondValidatorThePasswordWithoutAtLeastOneLowercaseLetterShouldBeInvalid() {
-        let errors = sut.validate("PASSWORD0", strategy: .second)
-        XCTAssertTrue(errors.contains(.missingLowercaseLetter))
+    func testWhenReceiveTheSecondValidatorThePasswordWithoutAtLeastOneLowercaseLetterShouldBeValid() {
+        let validation = sut.validate("PASSWORD0", strategy: .second)
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingLowercaseLetter])
     }
 
-    func testWhenReceiveTheSecondValidatorThePasswordWithoutAtLeastOneNumberShouldBeInvalid() {
-        let errors = sut.validate("Password", strategy: .second)
-        XCTAssertTrue(errors.contains(.missingNumber))
+    func testWhenReceiveTheSecondValidatorThePasswordWithoutAtLeastOneNumberShouldBeValid() {
+        let validation = sut.validate("Password", strategy: .second)
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingNumber])
+    }
+    
+    func testWhenReceiveTheSecondValidatorPasswordWithTwoErrorsShouldBeInvalid() {
+        let validation = sut.validate("p0_")
+        XCTAssertFalse(validation.valid)
+        XCTAssertEqual(validation.errors, [.invalidCharacters, .missingCapitalLetter])
     }
 
-// Validation 3
+    // Validation 3
 
     func testWhenReceiveTheThirdStrategyShouldValidateValidPassword() {
-        let errors = sut.validate("Passw0rdWithMoreThan16Characters_", strategy: .third)
-        XCTAssertTrue(errors.isEmpty)
+        let validation = sut.validate("Passw0rdWithMoreThan16Characters_", strategy: .third)
+        XCTAssertTrue(validation.valid)
+        XCTAssertTrue(validation.errors.isEmpty)
     }
 
-    func testWhenReceiveTheThirdStrategyThePasswordWithLessThan16CharactersShouldBeInvalid() {
-        let errors = sut.validate("PassWithout16C_", strategy: .third)
-        XCTAssertTrue(errors.contains(.invalidCharacters))
+    func testWhenReceiveTheThirdStrategyThePasswordWithLessThan16CharactersShouldBeValid() {
+        let validation = sut.validate("PassWithout16C_", strategy: .third)
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.invalidCharacters])
     }
 
-    func testWhenReceiveTheThirdStrategyThePasswordWithoutAtLeastOneCapitalLetterShouldBeInvalid() {
-        let errors = sut.validate("passw0rdwithmorethan16characters_", strategy: .third)
-        XCTAssertTrue(errors.contains(.missingCapitalLetter))
+    func testWhenReceiveTheThirdStrategyThePasswordWithoutAtLeastOneCapitalLetterShouldBeValid() {
+        let validation = sut.validate("passw0rdwithmorethan16characters_", strategy: .third)
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingCapitalLetter])
     }
 
-    func testWhenReceiveTheThirdStrategyThePasswordWithoutAtLeastOneLowercaseLetterShouldBeInvalid() {
-        let errors = sut.validate("PASSW0RDWITHMORETHAN16CHARACTERS_", strategy: .third)
-        XCTAssertTrue(errors.contains(.missingLowercaseLetter))
+    func testWhenReceiveTheThirdStrategyThePasswordWithoutAtLeastOneLowercaseLetterShouldBeValid() {
+        let validation = sut.validate("PASSW0RDWITHMORETHAN16CHARACTERS_", strategy: .third)
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingLowercaseLetter])
     }
 
-    func testWhenReceiveTheThirdStrategyThePasswordWithoutAtLeastOneUnderscoreShouldBeInvalid() {
-        let errors = sut.validate("passw0rdwithmorethan16characters", strategy: .third)
-        XCTAssertTrue(errors.contains(.missingUnderscore))
+    func testWhenReceiveTheThirdStrategyThePasswordWithoutAtLeastOneUnderscoreShouldBeValid() {
+        let validation = sut.validate("Passw0rdWithMoreThan16Characters", strategy: .third)
+        XCTAssertTrue(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingUnderscore])
+    }
+    
+    func testWhenReceiveTheThirdValidatorPasswordWithTwoErrorsShouldBeInvalid() {
+        let validation = sut.validate("PASSW0RDWITHMORETHAN16CHARACTERS")
+        XCTAssertFalse(validation.valid)
+        XCTAssertEqual(validation.errors, [.missingLowercaseLetter, .missingUnderscore])
     }
 }
